@@ -11,8 +11,9 @@ xbee = XBee(ser)
 # xbee = ZigBee(ser)
 
 #xbee.tx_long_addr(dest_addr=b'\x13\xA2\x00\x41\x54\x53\xBC\xFE')
-xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=b'Hello World')
+xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=b'12, 14, 00:00:00')
 response = xbee.wait_read_frame()
+print(response['status'])
 #0013A200415453D0
 #xbee.send('at', frame_id=b'A', command=b'DA')
 #xbee.sendStr("Hello World")
