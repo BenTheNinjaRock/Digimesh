@@ -1,6 +1,11 @@
 import tkinter
 from tkinter import ttk
 from tkinter import *
+
+from xbee import XBee
+import serial
+
+
 def main():
     root = tkinter.Tk()
     numpad = NumPad(root)
@@ -14,10 +19,14 @@ btn_list = [
 'Back', '0', 'Enter']
 
 state = 0
-v = 0
+labelVar = 0
+
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+xbee = XBee(ser)
+
 
 class NumPad(ttk.Frame):
-    global v
+    global labelVar
     def __init__(self, root):
         ttk.Frame.__init__(self, root)
         self.grid()
@@ -26,23 +35,23 @@ class NumPad(ttk.Frame):
         self.numpadCreate()
 
     def labelCreate(self, **options):
-        global v
-        v = StringVar()
+        global labelVar
+        labelVar = StringVar()
         s = ttk.Style()
         s.configure('my.TLabel', font=('Helvetica', 15))
-        self.l=ttk.Label(self, textvariable=v, style='my.TLabel', **options)
+        self.l=ttk.Label(self, textvariable=labelVar, style='my.TLabel', **options)
         self.l.grid(row=0,column=0, columnspan=3)
-        v.set('Enter the test number:')
+        labelVar.set('Enter the test number:')
 
     def entryBoxCreate(self, **options):
-        self.e= ttk.Entry(self, text="variable", width=10, font=('Helvetica', 14), **options)
+        self.e = ttk.Entry(self, text="variable", width=10, font=('Helvetica', 14), **options)
         self.e.config(justify="right")
         self.e.insert(0, '00')
         self.e.grid(row=1,column=1)
 
     def cmd(self, b):
         global state
-        global v
+        global labelVar
         m1 = m2 = c1= s1 = s2 = c2 = ms1 = ms2 = ''
         test = car1 = car2 = ''
         testNum = carNum = carTime = 0
@@ -64,7 +73,7 @@ class NumPad(ttk.Frame):
                     state = 1
                     self.e.delete(0, 2)
                     self.e.insert(0, '00')
-                    v.set('Please enter the car number')
+                    labelVar.set('Please enter the car number')
             else:
                 car1, car2 = current
                 car1 = car2
@@ -90,7 +99,7 @@ class NumPad(ttk.Frame):
                     state = 2
                     self.e.delete(0, 2)
                     self.e.insert(0, '00:00:00')
-                    v.set('Please enter the car time')
+                    labelVar.set('Please enter the car time')
             else:
                 car1, car2 = current
                 car1 = car2
@@ -121,7 +130,14 @@ class NumPad(ttk.Frame):
                     state = 1
                     self.e.delete(0, 8)
                     self.e.insert(0, '00')
-                    v.set('Please enter the car number')
+                    labelVar.set('Please enter the car number')
+
+                    dataVar = b(testNum + ', ' + carNum + ', ' + carTime)
+                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=dataVar)
+
+
+
+
             else:
                 m1, m2, c1, s1, s2, c2, ms1, ms2 = current
                 m1 = m2
