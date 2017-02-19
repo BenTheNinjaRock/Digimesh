@@ -20,6 +20,7 @@ btn_list = [
 
 state = 0
 labelVar = 0
+testNum = carNum = carTime = ''
 
 ser = serial.Serial('/dev/ttyUSB0', 9600)
 xbee = XBee(ser)
@@ -50,18 +51,15 @@ class NumPad(ttk.Frame):
         self.e.grid(row=1,column=1)
 
     def cmd(self, b):
-        global state
-        global labelVar
-        m1 = m2 = c1= s1 = s2 = c2 = ms1 = ms2 = ''
-        test = car1 = car2 = ''
-        testNum = carNum = carTime = 0
+        global state, labelVar, testNum, carNum, carTime
+        #m1 = m2 = c1= s1 = s2 = c2 = ms1 = ms2 = ''
+        #test = car1 = car2 = ''
         current = self.e.get()
         if state == 0:
             try:
                 test = int(b)
             except ValueError:
                 if b == 'Back':
-                    print(current)
                     car1, car2 = current
                     car2 = car1
                     car1 = '0'
@@ -69,7 +67,7 @@ class NumPad(ttk.Frame):
                     self.e.delete(0, 2)
                     self.e.insert(0, current)
                 else: # Change state to 1, insert car number patten to entry
-                    testNum = int(current)
+                    testNum = current
                     state = 1
                     self.e.delete(0, 2)
                     self.e.insert(0, '00')
@@ -87,7 +85,6 @@ class NumPad(ttk.Frame):
                 test = int(b)
             except ValueError:
                 if b == 'Back':
-                    print(current)
                     car1, car2 = current
                     car2 = car1
                     car1 = '0'
@@ -95,13 +92,13 @@ class NumPad(ttk.Frame):
                     self.e.delete(0, 2)
                     self.e.insert(0, current)
                 else: # Change state to 2, insert time pattern to entry
-                    carNum = int(current)
+                    carNum = current
                     state = 2
                     self.e.delete(0, 2)
                     self.e.insert(0, '00:00:00')
                     labelVar.set('Please enter the car time')
             else:
-                car1, car2 = current
+                car1, car2 = str(current)
                 car1 = car2
                 car2 = b
                 current = car1 + car2
@@ -121,19 +118,22 @@ class NumPad(ttk.Frame):
                     m2 = m1
                     m1 = '0'
                     current = m1 + m2 + c1 + s1 + s2 + c2 + ms1 + ms2
-                    print(current)
                     self.e.delete(0, 8)
                     self.e.insert(0, current)
                 else: # send data to digimesh using car1 car2 and entry.get, change state to 0
-                    carTime = current
                     #prepare and send over digimesh
                     state = 1
+                    carTime = current
                     self.e.delete(0, 8)
                     self.e.insert(0, '00')
                     labelVar.set('Please enter the car number')
-
-                    dataVar = b(testNum + ', ' + carNum + ', ' + carTime)
-                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=dataVar)
+                    print(testNum)
+                    dataVar = testNum + carNum + carTime
+                    print(dataVar)
+                    byteVar = bytearray()
+                    byteVar.extend(map(ord, dataVar))
+                    print(byteVar)
+                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=byteVar)
 
 
 
