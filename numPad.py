@@ -2,12 +2,19 @@ import tkinter
 from tkinter import ttk
 from tkinter import *
 
+from binascii import unhexlify
+import csv
+import sys
+
 from xbee import XBee
 import serial
 
 
 def main():
-    root = tkinter.Tk()
+    try:
+        root = tkinter.Tk()
+    except:
+        sys.exit()
     numpad = NumPad(root)
     root.attributes("-fullscreen", True)
     root.mainloop()    
@@ -127,13 +134,25 @@ class NumPad(ttk.Frame):
                     self.e.delete(0, 8)
                     self.e.insert(0, '00')
                     labelVar.set('Please enter the car number')
-                    print(testNum)
-                    dataVar = testNum + carNum + carTime
-                    print(dataVar)
+#                    print(testNum)
+                    dataVar = testNum + ',' + carNum + ',' + carTime
+#                    print(dataVar)
                     byteVar = bytearray()
                     byteVar.extend(map(ord, dataVar))
-                    print(byteVar)
-                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x13\xA2\x00\x41\x54\x53\xD0', options=b'\x00', data=byteVar)
+#                    print(byteVar)
+                    with open('addresses.csv', 'r') as f:
+                        reader = csv.DictReader(f, dialect='excel-tab')
+                        for row in reader:
+                            if row['Car'] == carNum:
+#                                print(row['Car'], row['Address'])
+                                c=unhexlify(row['Address'])
+
+                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=c, options=b'\x00', data=byteVar)
+                    response = xbee.wait_read_frame()
+                    print(response['status'])
+                    if response['status'] != b'\x00':
+                        print('blah')
+                        xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x00\x00\x00\x00\x00\xFF\xFF', options=b'\x00', data=byteVar)
 
 
 
@@ -147,7 +166,7 @@ class NumPad(ttk.Frame):
                 ms1 = ms2
                 ms2 = b
                 current = m1 + m2 + c1 + s1 + s2 + c2 + ms1 + ms2
-                print(current)
+#                print(current)
                 self.e.delete(0, 8)
                 self.e.insert(0, current)
 
