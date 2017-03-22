@@ -5,8 +5,9 @@ from tkinter import *
 from binascii import unhexlify
 import csv
 import sys
+import time
 
-from xbee import XBee
+from xbee import DigiMesh
 import serial
 
 
@@ -30,7 +31,7 @@ labelVar = 0
 testNum = carNum = carTime = ''
 
 ser = serial.Serial('/dev/ttyUSB0', 9600)
-xbee = XBee(ser)
+xbee = DigiMesh(ser)
 
 
 class NumPad(ttk.Frame):
@@ -130,6 +131,7 @@ class NumPad(ttk.Frame):
                 else: # send data to digimesh using car1 car2 and entry.get, change state to 0
                     #prepare and send over digimesh
                     state = 1
+                    c = None
                     carTime = current
                     self.e.delete(0, 8)
                     self.e.insert(0, '00')
@@ -139,24 +141,30 @@ class NumPad(ttk.Frame):
 #                    print(dataVar)
                     byteVar = bytearray()
                     byteVar.extend(map(ord, dataVar))
-#                    print(byteVar)
-                    with open('addresses.csv', 'r') as f:
-                        reader = csv.DictReader(f, dialect='excel-tab')
+                    print(byteVar)
+                    with open('addresses.csv', 'r') as rf:
+                        reader = csv.DictReader(rf, dialect='excel-tab')
                         for row in reader:
                             if row['Car'] == carNum:
 #                                print(row['Car'], row['Address'])
                                 c=unhexlify(row['Address'])
+                    if c != None:
+                        xbee.tx(id=b'\x10', frame_id=b'\x01', dest_addr=c, options=b'\x00', data=byteVar)
+                        response = xbee.wait_read_frame()
+#                        print(response['status'])
+                        if response['status'] != b'\x00':
+                            print(c)
+                            xbee.tx(dest_addr=b'\x00\x00\x00\x00\x00\x00\xFF\xFF', data=byteVar)
+                    else:
+                        if not c:
+                            print('blah')
+                        xbee.tx(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x00\x00\x00\x00\x00\xFF\xFF', options=b'\x00', data=byteVar)
 
-                    xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=c, options=b'\x00', data=byteVar)
-                    response = xbee.wait_read_frame()
-                    print(response['status'])
-                    if response['status'] != b'\x00':
-                        print('blah')
-                        xbee.tx_long_addr(id=b'\x10', frame_id=b'\x01', dest_addr=b'\x00\x00\x00\x00\x00\x00\xFF\xFF', options=b'\x00', data=byteVar)
-
-
-
-
+                    fieldnames = ['Timestamp', 'Test', 'Car', 'Time']
+                    with open('scores.csv', 'a') as wf:
+                        fileWriter = csv.DictWriter(wf, fieldnames = fieldnames)
+                        fileWriter.writerow({'Timestamp': time.asctime(time.localtime(time.time())),'Test': testNum, 'Car' : carNum, 'Time' : carTime})
+                                
             else:
                 m1, m2, c1, s1, s2, c2, ms1, ms2 = current
                 m1 = m2

@@ -211,6 +211,8 @@ class XBeeBase(threading.Thread):
             # Otherwise, the parameter was of variable length, and not
             #  given
             if data:
+                print(packet)
+                #print(data)
                 packet += data
 
         return packet

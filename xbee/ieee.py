@@ -57,6 +57,22 @@ class XBee(XBeeBase):
                          {'name':'radius',          'len':1,        'default':b'\x00'},
                          {'name':'options',         'len':1,        'default':b'\x00'},
                          {'name':'data',            'len':None,     'default':None}],
+                    "tx_update":
+                        [{'name':'id',              'len':1,        'default':b'\x10'},
+                         {'name':'frame_id',        'len':1,        'default':b'\x01'},
+                         {'name':'dest_addr',       'len':8,        'default':None},
+                         {'name':'reserved',        'len':2,        'default':b'\xFF\xFE'},
+                         {'name':'radius',          'len':1,        'default':b'\x00'},
+                         {'name':'options',         'len':1,        'default':b'\x00'},
+                         {'name':'data',            'len':None,     'default':None}],
+                    "tx_checksum_send":
+                        [{'name':'id',              'len':1,        'default':b'\x00'},
+                         {'name':'frame_id',        'len':1,        'default':b'\x01'},
+                         {'name':'dest_addr',       'len':8,        'default':None},
+                         {'name':'reserved',        'len':2,        'default':b'\xFF\xFE'},
+                         {'name':'radius',          'len':1,        'default':b'\x00'},
+                         {'name':'options',         'len':1,        'default':b'\x00'},
+                         {'name':'data',            'len':None,     'default':None}],
                     "tx":
                         [{'name':'id',              'len':1,        'default':b'\x01'},
                          {'name':'frame_id',        'len':1,        'default':b'\x00'},
@@ -118,7 +134,7 @@ class XBee(XBeeBase):
                          'parsing': [('samples',
 									  lambda xbee,original: xbee._parse_samples(original['samples'])
 									 )]},
-##custom tx_status packet
+##custom tx_status packet 
                      b"\x8b":
                         {'name':'tx_status',
                          'structure':
@@ -128,6 +144,19 @@ class XBee(XBeeBase):
                              {'name':'status',   'len':1},
                              {'name':'discovery','len':1},
                              ]},
+##custom rx_update packet
+                     b"\x90":
+                        {'name':'rx',
+                         'structure':
+                            [{'name':'frame_id',    'len':1},
+                             {'name':'source_addr_long','len':8},
+                             {'name':'reserved',        'len':2},
+                             {'name':'options',     'len':1},
+                             {'name':'rf_data',     'len':None}]},
+
+                           
+
+
 
                      b"\x8a":
                         {'name':'status',

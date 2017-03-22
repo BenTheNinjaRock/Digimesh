@@ -19,8 +19,8 @@ with open('addresses.csv', 'r') as f:
 #xbee.tx_long_addr(dest_addr=b'\x13\xA2\x00\x41\x54\x53\xBC\xFE')
 a=b'\x10'
 b=b'\x01'
-#c=b'\x00\x13\xA2\x00\x41\x54\x53\xD0'
-c=b'\x00\x00\x00\x00\x00\x00\xFF\xFF'
+c=b'\x00\x13\xA2\x00\x41\x54\x53\xD0'
+#c=b'\x00\x00\x00\x00\x00\x00\xFF\xFF'
 d=b'\x00'
 t1='t1'
 t2='55'
@@ -29,10 +29,9 @@ t4='t4'
 tt= t1 + t2 + t3 + t4
 e= bytearray()
 e.extend(map(ord, tt))
-print(c)
 print(e)
 
-xbee.tx_long_addr(id=b'\x10', frame_id=b, dest_addr=c, radius=b'\x01', options=d, data=e)
+xbee.tx_update(id=b'\x10', frame_id=b, dest_addr=c, radius=b'\x01', options=d, data=e)
 #response = xbee.wait_read_frame()
 #print(chr(response['status']))
 #if response != '\x00':
