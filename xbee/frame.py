@@ -128,7 +128,7 @@ class APIFrame:
         as escaped and this byte is an escape byte, the next byte in a call
         to fill() will be unescaped.
         """
-
+        self.escaped = True
         if self._unescape_next_byte:
             byte = intToByte(byteToInt(byte) ^ 0x20)
             self._unescape_next_byte = False

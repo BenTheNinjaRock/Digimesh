@@ -58,12 +58,12 @@ class XBee(XBeeBase):
                          {'name':'options',         'len':1,        'default':b'\x00'},
                          {'name':'data',            'len':None,     'default':None}],
                     "tx_update":
-                        [{'name':'id',              'len':1,        'default':b'\x10'},
-                         {'name':'frame_id',        'len':1,        'default':b'\x01'},
+                        [{'name':'id',              'len':1,        'default':'\x10'},
+                         {'name':'frame_id',        'len':1,        'default':'\x01'},
                          {'name':'dest_addr',       'len':8,        'default':None},
-                         {'name':'reserved',        'len':2,        'default':b'\xFF\xFE'},
-                         {'name':'radius',          'len':1,        'default':b'\x00'},
-                         {'name':'options',         'len':1,        'default':b'\x00'},
+                         {'name':'reserved',        'len':2,        'default':'\xFF\xFE'},
+                         {'name':'radius',          'len':1,        'default':'\x00'},
+                         {'name':'options',         'len':1,        'default':'\x00'},
                          {'name':'data',            'len':None,     'default':None}],
                     "tx_checksum_send":
                         [{'name':'id',              'len':1,        'default':b'\x00'},

@@ -49,12 +49,12 @@ class DigiMesh(XBeeBase):
                          {'name':'command',         'len':2,        'default':None},
                          {'name':'parameter',       'len':None,     'default':None}],
                     "tx":
-                        [{'name':'id',              'len':1,        'default':'\x10'},
-                         {'name':'frame_id',        'len':1,        'default':'\x00'},
+                        [{'name':'id',              'len':1,        'default':b'\x10'},
+                         {'name':'frame_id',        'len':1,        'default':b'\x00'},
                          {'name':'dest_addr',       'len':8,        'default':None},
-                         {'name':'reserved',        'len':2,        'default':'\xFF\xFE'},
-                         {'name':'broadcast_radius','len':1,       'default':'\x00'},
-                         {'name':'options',         'len':1,        'default':'\x00'},
+                         {'name':'reserved',        'len':2,        'default':b'\xFF\xFE'},
+                         {'name':'broadcast_radius','len':1,        'default':b'\x00'},
+                         {'name':'options',         'len':1,        'default':b'\x00'},
                          {'name':'data',            'len':None,     'default':None}]
                     }
     
@@ -95,7 +95,7 @@ class DigiMesh(XBeeBase):
                         {'name':'rx',
                          'structure':
                             [{'name':'frame_id',    'len':1},
-                             {'name':'source_addr', 'len':8},
+                             {'name':'source_addr', 'len':7},
                              {'name':'reserved',    'len':2},
                              {'name':'options',     'len':1},
                              {'name':'data',        'len':None}]},
