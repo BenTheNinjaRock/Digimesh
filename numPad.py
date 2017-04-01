@@ -137,7 +137,7 @@ class NumPad(ttk.Frame):
                     self.e.insert(0, '00')
                     labelVar.set('Please enter the car number')
 #                    print(testNum)
-                    dataVar = '0:' + testNum + ',' + carNum + ',' + carTime
+                    dataVar = '0 ' + testNum + ' ' + carNum + ' ' + carTime
 #                    print(dataVar)
                     byteVar = bytearray()
                     byteVar.extend(map(ord, dataVar))

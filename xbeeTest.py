@@ -13,7 +13,7 @@ xbee = DigiMesh(ser)
 with open('addresses.csv', 'r') as f:
     reader = csv.DictReader(f, dialect='excel-tab')
     for row in reader:
-        if row['Car'] == '41':
+        if row['Car'] == '10':
             print(row['Car'], row['Address'])
             c=unhexlify(row['Address'])
 #xbee.tx_long_addr(dest_addr=b'\x13\xA2\x00\x41\x54\x53\xBC\xFE')
@@ -28,7 +28,7 @@ t3='33:33:33'
 tt= '0:' + t1 + ',' + t2 + ',' + t3
 e= bytearray()
 e.extend(map(ord, tt))
-print(e)
+print(c)
 
 xbee.tx(id=b'\x10', frame_id=b, dest_addr=c, radius=b'\x01', options=d, data=e)
 #response = xbee.wait_read_frame()
